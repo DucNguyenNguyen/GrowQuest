@@ -1,0 +1,352 @@
+@model IEnumerable<GrowQuest.Models.Mission>
+
+@{
+    ViewData["Title"] = "Today's Missions";
+
+    int progressPoints = ViewBag.ProgressPoints ?? 0;
+    int currentStage = ViewBag.CurrentStage ?? 1;
+    string growthName = ViewBag.GrowthName ?? "GrowQuest Plant";
+
+    string plantEmoji = "🌱";
+    string stageName = "Seed";
+    int nextStagePoints = 30;
+    int previousStagePoints = 0;
+
+    if (currentStage == 2)
+    {
+        plantEmoji = "🌿";
+        stageName = "Small Plant";
+        previousStagePoints = 30;
+        nextStagePoints = 70;
+    }
+    else if (currentStage == 3)
+    {
+        plantEmoji = "🪴";
+        stageName = "Growing Plant";
+        previousStagePoints = 70;
+        nextStagePoints = 120;
+    }
+    else if (currentStage >= 4)
+    {
+        plantEmoji = "🌳";
+        stageName = "Fully Grown";
+        previousStagePoints = 120;
+        nextStagePoints = 120;
+    }
+
+    int progressPercent = 100;
+
+    if (currentStage < 4)
+    {
+        int pointsInStage = progressPoints - previousStagePoints;
+        int pointsNeeded = nextStagePoints - previousStagePoints;
+
+        progressPercent = (int)((double)pointsInStage / pointsNeeded * 100);
+
+        if (progressPercent < 0)
+        {
+            progressPercent = 0;
+        }
+
+        if (progressPercent > 100)
+        {
+            progressPercent = 100;
+        }
+    }
+
+    int completedCount = Model.Count(m => m.IsCompleted);
+    int totalCount = Model.Count();
+}
+
+<div class="container py-4">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h1 class="fw-bold">
+                🌱 GrowQuest
+            </h1>
+
+            <p class="text-muted mb-0">
+                Complete your daily missions and grow your plant.
+            </p>
+        </div>
+
+        <a asp-action="Create"
+           class="btn btn-success btn-lg">
+            + New Mission
+        </a>
+
+    </div>
+
+
+    <!-- Growth Section -->
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-body p-4">
+
+            <div class="row align-items-center">
+
+                <div class="col-md-3 text-center">
+
+                    <div style="font-size: 100px;">
+                        @plantEmoji
+                    </div>
+
+                </div>
+
+                <div class="col-md-9">
+
+                    <h2 class="fw-bold">
+                        @growthName
+                    </h2>
+
+                    <h5>
+                        Stage @currentStage - @stageName
+                    </h5>
+
+                    <p class="mb-2">
+                        <strong>@progressPoints XP</strong>
+                    </p>
+
+                    <div class="progress"
+                         style="height: 25px;">
+
+                        <div class="progress-bar bg-success"
+                             role="progressbar"
+                             style="width: @progressPercent%;">
+
+                            @progressPercent%
+
+                        </div>
+
+                    </div>
+
+                    @if (currentStage < 4)
+                    {
+                        <p class="text-muted mt-2 mb-0">
+                            @(nextStagePoints - progressPoints)
+                            XP until the next growth stage
+                        </p>
+                    }
+                    else
+                    {
+                        <p class="text-success mt-2 mb-0">
+                            🌟 Your plant is fully grown!
+                        </p>
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Daily Progress -->
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-body">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <div>
+                    <h5 class="mb-1">
+                        Today's Progress
+                    </h5>
+
+                    <p class="text-muted mb-0">
+                        @completedCount of @totalCount missions completed
+                    </p>
+                </div>
+
+                <div>
+                    <span class="badge bg-success fs-6">
+                        @completedCount / @totalCount
+                    </span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Mission Heading -->
+    <div class="mb-3">
+
+        <h2>
+            Today's Missions
+        </h2>
+
+    </div>
+
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+
+            You don't have any missions yet.
+
+            <a asp-action="Create">
+                Create your first mission
+            </a>
+
+            to begin your quest!
+
+        </div>
+    }
+    else
+    {
+        <div class="row">
+
+            @foreach (var item in Model)
+            {
+                <div class="col-md-6 mb-4">
+
+                    <div class="card shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <!-- Mission title and difficulty -->
+                            <div class="d-flex justify-content-between align-items-start">
+
+                                <h4 class="card-title">
+                                    @item.Title
+                                </h4>
+
+                                @if (item.Difficulty == "Easy")
+                                {
+                                    <span class="badge bg-success">
+                                        Easy +10 XP
+                                    </span>
+                                }
+                                else if (item.Difficulty == "Medium")
+                                {
+                                    <span class="badge bg-warning text-dark">
+                                        Medium +20 XP
+                                    </span>
+                                }
+                                else if (item.Difficulty == "Hard")
+                                {
+                                    <span class="badge bg-danger">
+                                        Hard +30 XP
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">
+                                        @item.Difficulty
+                                    </span>
+                                }
+
+                            </div>
+
+
+                            <!-- Description -->
+                            @if (!string.IsNullOrWhiteSpace(item.Description))
+                            {
+                                <p class="card-text mt-3">
+                                    @item.Description
+                                </p>
+                            }
+
+
+                            <!-- Created Date -->
+                            <p class="small text-muted">
+
+                                Created:
+                                @item.CreatedDate.ToString("MMM dd, yyyy h:mm tt")
+
+                            </p>
+
+
+                            <!-- Completed Mission -->
+                            @if (item.IsCompleted)
+                            {
+                                <div class="alert alert-success">
+
+                                    <strong>
+                                        ✅ Mission Completed
+                                    </strong>
+
+                                    @if (item.CompletedDate.HasValue)
+                                    {
+                                        <br />
+
+                                        <small>
+                                            Completed:
+                                            @item.CompletedDate.Value.ToString("MMM dd, yyyy h:mm tt")
+                                        </small>
+                                    }
+
+                                </div>
+                            }
+                            else
+                            {
+                                <form asp-action="Complete"
+                                      method="post"
+                                      class="mb-3">
+
+                                    <input type="hidden"
+                                           name="id"
+                                           value="@item.MissionId" />
+
+                                    <button type="submit"
+                                            class="btn btn-success">
+
+                                        ✓ Complete Mission
+
+                                    </button>
+
+                                </form>
+                            }
+
+
+                            <!-- Actions -->
+                            <div>
+
+                                @if (!item.IsCompleted)
+                                {
+                                    <a asp-action="Edit"
+                                       asp-route-id="@item.MissionId"
+                                       class="btn btn-outline-primary btn-sm">
+
+                                        Edit
+
+                                    </a>
+                                }
+
+                                <a asp-action="Details"
+                                   asp-route-id="@item.MissionId"
+                                   class="btn btn-outline-secondary btn-sm">
+
+                                    Details
+
+                                </a>
+
+                                <a asp-action="Delete"
+                                   asp-route-id="@item.MissionId"
+                                   class="btn btn-outline-danger btn-sm">
+
+                                    Delete
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+    }
+
+</div>

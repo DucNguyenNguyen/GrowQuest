@@ -1,0 +1,223 @@
+@model GrowQuest.Models.Mission
+
+@{
+    ViewData["Title"] = "Create Mission";
+}
+
+<div class="growquest-page">
+
+    <div class="create-mission-wrapper">
+
+        <!-- Page Heading -->
+        <div class="text-center mb-4">
+
+            <div class="page-icon">
+                🌱
+            </div>
+
+            <h1 class="fw-bold mb-2">
+                Create a New Mission
+            </h1>
+
+            <p class="text-muted mb-0">
+                Add something you want to accomplish today.
+            </p>
+
+        </div>
+
+
+        <!-- Create Mission Card -->
+        <div class="card growquest-card">
+
+            <div class="card-body p-4 p-md-5">
+
+                <form asp-action="Create">
+
+                    <div asp-validation-summary="ModelOnly"
+                         class="text-danger mb-3">
+                    </div>
+
+
+                    <!-- Mission Title -->
+                    <div class="mb-4">
+
+                        <label asp-for="Title"
+                               class="form-label fw-semibold">
+
+                            Mission Title
+
+                        </label>
+
+                        <input asp-for="Title"
+                               class="form-control growquest-input"
+                               placeholder="Example: Finish my assignment" />
+
+                        <span asp-validation-for="Title"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+
+                    <!-- Description -->
+                    <div class="mb-4">
+
+                        <label asp-for="Description"
+                               class="form-label fw-semibold">
+
+                            Description
+
+                        </label>
+
+                        <textarea asp-for="Description"
+                                  class="form-control growquest-input"
+                                  rows="4"
+                                  placeholder="What do you need to accomplish?"></textarea>
+
+                        <span asp-validation-for="Description"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+
+                    <!-- Difficulty -->
+                    <div class="mb-3">
+
+                        <label asp-for="Difficulty"
+                               class="form-label fw-semibold">
+
+                            Difficulty
+
+                        </label>
+
+                        <select asp-for="Difficulty"
+                                class="form-select growquest-input"
+                                id="difficultySelect">
+
+                            <option value="">
+                                Choose difficulty
+                            </option>
+
+                            <option value="Easy">
+                                🟢 Easy — 10 XP
+                            </option>
+
+                            <option value="Medium">
+                                🟡 Medium — 20 XP
+                            </option>
+
+                            <option value="Hard">
+                                🔴 Hard — 30 XP
+                            </option>
+
+                        </select>
+
+                        <span asp-validation-for="Difficulty"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+
+                    <!-- Reward Information -->
+                    <div class="reward-box mb-4">
+
+                        <div class="reward-icon">
+                            ⭐
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Mission Reward
+                            </strong>
+
+                            <div class="text-muted small">
+                                Complete this mission to earn XP
+                                and grow your plant.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Buttons -->
+                    <div class="d-grid gap-2">
+
+                        <button type="submit"
+                                class="btn btn-success btn-lg">
+
+                            🌱 Create Mission
+
+                        </button>
+
+                        <a asp-action="Index"
+                           class="btn btn-light btn-lg">
+
+                            Cancel
+
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+
+        <!-- XP Guide -->
+        <div class="xp-guide mt-4">
+
+            <div class="xp-item">
+
+                <span class="difficulty-dot easy-dot"></span>
+
+                <div>
+                    <strong>Easy</strong>
+                    <small>10 XP</small>
+                </div>
+
+            </div>
+
+
+            <div class="xp-item">
+
+                <span class="difficulty-dot medium-dot"></span>
+
+                <div>
+                    <strong>Medium</strong>
+                    <small>20 XP</small>
+                </div>
+
+            </div>
+
+
+            <div class="xp-item">
+
+                <span class="difficulty-dot hard-dot"></span>
+
+                <div>
+                    <strong>Hard</strong>
+                    <small>30 XP</small>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+}

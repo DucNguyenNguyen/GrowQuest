@@ -1,0 +1,272 @@
+html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin: 0;
+    background-color: #f6f8f6;
+    color: #26332a;
+}
+
+
+/* ================================
+   NAVBAR
+   ================================ */
+
+.navbar {
+    min-height: 70px;
+    background-color: #ffffff !important;
+}
+
+.navbar-brand {
+    font-size: 1.35rem;
+}
+
+.navbar .nav-link {
+    font-weight: 500;
+    margin-left: 8px;
+}
+
+    .navbar .nav-link:hover {
+        color: #198754 !important;
+    }
+
+
+/* ================================
+   GENERAL PAGE
+   ================================ */
+
+.growquest-page {
+    min-height: calc(100vh - 150px);
+    padding: 50px 20px 70px;
+}
+
+.create-mission-wrapper {
+    width: 100%;
+    max-width: 680px;
+    margin: 0 auto;
+}
+
+
+/* ================================
+   CREATE MISSION
+   ================================ */
+
+.page-icon {
+    font-size: 55px;
+    margin-bottom: 8px;
+}
+
+.growquest-card {
+    border: none;
+    border-radius: 20px;
+    overflow: hidden;
+    background: #ffffff;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
+}
+
+.growquest-input {
+    min-height: 48px;
+    border-radius: 10px;
+    border: 1px solid #d9e1da;
+    background-color: #fbfcfb;
+}
+
+textarea.growquest-input {
+    min-height: 120px;
+}
+
+.growquest-input:focus {
+    border-color: #198754;
+    box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.12);
+    background-color: #ffffff;
+}
+
+.form-label {
+    margin-bottom: 8px;
+}
+
+
+/* ================================
+   REWARD BOX
+   ================================ */
+
+.reward-box {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 15px 18px;
+    border-radius: 12px;
+    background-color: #f1f8f3;
+    border: 1px solid #d8eadc;
+}
+
+.reward-icon {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    border-radius: 50%;
+    font-size: 20px;
+}
+
+
+/* ================================
+   XP GUIDE
+   ================================ */
+
+.xp-guide {
+    display: flex;
+    justify-content: center;
+    gap: 35px;
+    padding: 18px 20px;
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+}
+
+.xp-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+    .xp-item div {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .xp-item small {
+        color: #6c757d;
+    }
+
+.difficulty-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.easy-dot {
+    background-color: #198754;
+}
+
+.medium-dot {
+    background-color: #ffc107;
+}
+
+.hard-dot {
+    background-color: #dc3545;
+}
+
+
+/* ================================
+   BUTTONS
+   ================================ */
+
+.btn {
+    border-radius: 10px;
+    font-weight: 500;
+}
+
+.btn-success {
+    background-color: #198754;
+    border-color: #198754;
+}
+
+    .btn-success:hover {
+        background-color: #157347;
+        border-color: #146c43;
+    }
+
+.btn-light {
+    background-color: #f1f3f2;
+    border-color: #e4e7e5;
+}
+
+    .btn-light:hover {
+        background-color: #e5e9e6;
+    }
+
+
+/* ================================
+   MISSION CARDS
+   ================================ */
+
+.card {
+    border-radius: 15px;
+}
+
+.card-title {
+    font-weight: 600;
+}
+
+.badge {
+    padding: 7px 10px;
+    border-radius: 8px;
+}
+
+
+/* ================================
+   PROGRESS BAR
+   ================================ */
+
+.progress {
+    border-radius: 20px;
+    overflow: hidden;
+    background-color: #e7ece8;
+}
+
+.progress-bar {
+    font-weight: 600;
+}
+
+
+/* ================================
+   FOOTER
+   ================================ */
+
+.footer {
+    background-color: #ffffff;
+}
+
+
+/* ================================
+   MOBILE
+   ================================ */
+
+@media (max-width: 576px) {
+
+    .growquest-page {
+        padding: 30px 15px 50px;
+    }
+
+    .growquest-card .card-body {
+        padding: 25px !important;
+    }
+
+    .xp-guide {
+        gap: 15px;
+        justify-content: space-between;
+    }
+
+    .xp-item {
+        font-size: 0.85rem;
+    }
+
+    .navbar-text {
+        display: none;
+    }
+}
