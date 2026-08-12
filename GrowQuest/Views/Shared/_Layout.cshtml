@@ -37,11 +37,18 @@
 
     <header>
 
-        <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom shadow-sm">
+        <nav class="navbar
+                    navbar-expand-sm
+                    navbar-light
+                    bg-white
+                    border-bottom
+                    shadow-sm">
 
             <div class="container">
 
-                <a class="navbar-brand fw-bold text-success"
+                <a class="navbar-brand
+                          fw-bold
+                          text-success"
                    asp-controller="Missions"
                    asp-action="Index">
 
@@ -66,7 +73,10 @@
                 <div class="collapse navbar-collapse"
                      id="growQuestNavbar">
 
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <ul class="navbar-nav
+                               me-auto
+                               mb-2
+                               mb-lg-0">
 
                         <li class="nav-item">
 
@@ -93,6 +103,19 @@
 
                         </li>
 
+
+                        <li class="nav-item">
+
+                            <a class="nav-link"
+                               asp-controller="Missions"
+                               asp-action="History">
+
+                                History
+
+                            </a>
+
+                        </li>
+
                     </ul>
 
 
@@ -112,7 +135,7 @@
 
 
     <!-- =========================
-         PAGE CONTENT
+         CONTENT
          ========================= -->
 
     <main role="main"
@@ -156,7 +179,9 @@
             asp-append-version="true"></script>
 
 
-    @await RenderSectionAsync("Scripts", required: false)
+    @await RenderSectionAsync(
+        "Scripts",
+        required: false)
 
 
 </body>

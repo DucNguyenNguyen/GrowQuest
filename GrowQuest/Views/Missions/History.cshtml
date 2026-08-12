@@ -1,0 +1,321 @@
+﻿@model IEnumerable<GrowQuest.Models.Mission>
+
+@{
+    ViewData["Title"] = "Mission History";
+
+    int totalMissions = ViewBag.TotalMissions ?? 0;
+    int completedMissions = ViewBag.CompletedMissions ?? 0;
+    int incompleteMissions = ViewBag.IncompleteMissions ?? 0;
+}
+
+<div class="container py-5">
+
+    <!-- Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+
+        <div>
+            <h1 class="fw-bold mb-1">
+                📚 Mission History
+            </h1>
+
+            <p class="text-muted mb-0">
+                Review your previous GrowQuest missions.
+            </p>
+        </div>
+
+        <a asp-action="Index"
+           class="btn btn-outline-success">
+            ← Back to Dashboard
+        </a>
+
+    </div>
+
+
+    <!-- Summary Cards -->
+    <div class="row g-3 mb-5">
+
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body p-4">
+
+                    <div class="text-muted small">
+                        Total Missions
+                    </div>
+
+                    <div class="fs-2 fw-bold">
+                        @totalMissions
+                    </div>
+
+                    <div class="small text-muted">
+                        📋 All recorded missions
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body p-4">
+
+                    <div class="text-muted small">
+                        Completed
+                    </div>
+
+                    <div class="fs-2 fw-bold text-success">
+                        @completedMissions
+                    </div>
+
+                    <div class="small text-muted">
+                        ✅ Missions accomplished
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body p-4">
+
+                    <div class="text-muted small">
+                        Incomplete
+                    </div>
+
+                    <div class="fs-2 fw-bold">
+                        @incompleteMissions
+                    </div>
+
+                    <div class="small text-muted">
+                        ⏳ Missions not completed
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- History -->
+    @if (!Model.Any())
+    {
+        <div class="card shadow-sm border-0">
+
+            <div class="card-body py-5 text-center">
+
+                <div style="font-size: 55px;">
+                    🌱
+                </div>
+
+                <h4 class="fw-bold mt-3">
+                    No mission history yet
+                </h4>
+
+                <p class="text-muted">
+                    Create your first mission to begin your GrowQuest journey.
+                </p>
+
+                <a asp-action="Create"
+                   class="btn btn-success">
+                    + Create Mission
+                </a>
+
+            </div>
+
+        </div>
+    }
+    else
+    {
+        <div class="card shadow-sm border-0">
+
+            <div class="card-body p-0">
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle mb-0">
+
+                        <thead class="table-light">
+
+                            <tr>
+                                <th class="ps-4">
+                                    Mission
+                                </th>
+
+                                <th>
+                                    Difficulty
+                                </th>
+
+                                <th>
+                                    Created
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th>
+                                    Completed
+                                </th>
+
+                                <th class="text-end pe-4">
+                                    Actions
+                                </th>
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+
+                                    <!-- Mission -->
+                                    <td class="ps-4">
+
+                                        <strong>
+                                            @item.Title
+                                        </strong>
+
+                                        @if (!string.IsNullOrWhiteSpace(item.Description))
+                                        {
+                                            <div class="small text-muted">
+                                                @item.Description
+                                            </div>
+                                        }
+
+                                    </td>
+
+
+                                    <!-- Difficulty -->
+                                    <td>
+
+                                        @if (item.Difficulty == "Easy")
+                                        {
+                                            <span class="badge bg-success">
+                                                Easy +10 XP
+                                            </span>
+                                        }
+                                        else if (item.Difficulty == "Medium")
+                                        {
+                                            <span class="badge bg-warning text-dark">
+                                                Medium +20 XP
+                                            </span>
+                                        }
+                                        else if (item.Difficulty == "Hard")
+                                        {
+                                            <span class="badge bg-danger">
+                                                Hard +30 XP
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">
+                                                @item.Difficulty
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <!-- Created -->
+                                    <td>
+
+                                        <div>
+                                            @item.CreatedDate.ToString("MMM dd, yyyy")
+                                        </div>
+
+                                        <div class="small text-muted">
+                                            @item.CreatedDate.ToString("h:mm tt")
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- Status -->
+                                    <td>
+
+                                        @if (item.IsCompleted)
+                                        {
+                                            <span class="text-success fw-semibold">
+                                                ✅ Completed
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-warning fw-semibold">
+                                                ⏳ Incomplete
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <!-- Completed Date -->
+                                    <td>
+
+                                        @if (item.CompletedDate.HasValue)
+                                        {
+                                            <div>
+                                                @item.CompletedDate.Value.ToString("MMM dd, yyyy")
+                                            </div>
+
+                                            <div class="small text-muted">
+                                                @item.CompletedDate.Value.ToString("h:mm tt")
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                —
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <!-- Actions -->
+                                    <td class="text-end pe-4">
+
+                                        @if (!item.IsCompleted)
+                                        {
+                                            <a asp-action="Edit"
+                                               asp-route-id="@item.MissionId"
+                                               class="btn btn-outline-primary btn-sm">
+                                                Edit
+                                            </a>
+                                        }
+
+                                        <a asp-action="Details"
+                                           asp-route-id="@item.MissionId"
+                                           class="btn btn-outline-secondary btn-sm">
+                                            Details
+                                        </a>
+
+                                        <a asp-action="Delete"
+                                           asp-route-id="@item.MissionId"
+                                           class="btn btn-outline-danger btn-sm">
+                                            Delete
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+    }
+
+</div>

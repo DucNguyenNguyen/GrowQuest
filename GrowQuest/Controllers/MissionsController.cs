@@ -14,6 +14,7 @@ namespace GrowQuest.Controllers
             _context = context;
         }
 
+
         // =========================================
         // DASHBOARD
         // =========================================
@@ -48,12 +49,37 @@ namespace GrowQuest.Controllers
                 ViewBag.GrowthName = growthItem.Name;
             }
 
-            ViewBag.TotalToday = missions.Count;
+            ViewBag.TotalToday =
+                missions.Count;
 
             ViewBag.CompletedToday =
                 missions.Count(m => m.IsCompleted);
 
             ViewBag.RemainingToday =
+                missions.Count(m => !m.IsCompleted);
+
+            return View(missions);
+        }
+
+
+        // =========================================
+        // MISSION HISTORY
+        // =========================================
+
+        // GET: Missions/History
+        public async Task<IActionResult> History()
+        {
+            var missions = await _context.Missions
+                .OrderByDescending(m => m.CreatedDate)
+                .ToListAsync();
+
+            ViewBag.TotalMissions =
+                missions.Count;
+
+            ViewBag.CompletedMissions =
+                missions.Count(m => m.IsCompleted);
+
+            ViewBag.IncompleteMissions =
                 missions.Count(m => !m.IsCompleted);
 
             return View(missions);
@@ -139,7 +165,6 @@ namespace GrowQuest.Controllers
                 return NotFound();
             }
 
-            // Completed missions cannot be edited
             if (mission.IsCompleted)
             {
                 return RedirectToAction(nameof(Index));
@@ -175,7 +200,6 @@ namespace GrowQuest.Controllers
                         return NotFound();
                     }
 
-                    // Completed missions cannot be changed
                     if (existingMission.IsCompleted)
                     {
                         return RedirectToAction(nameof(Index));
@@ -248,15 +272,8 @@ namespace GrowQuest.Controllers
                 return NotFound();
             }
 
-            // Deleting a mission does NOT change XP.
-            //
-            // If the mission is incomplete:
-            // it never earned XP in the first place.
-            //
-            // If the mission is completed:
-            // the XP was already earned and is kept
-            // as lifetime progress.
-
+            // XP represents lifetime earned progress.
+            // Deleting a mission does not remove XP.
             _context.Missions.Remove(mission);
 
             await _context.SaveChangesAsync();
