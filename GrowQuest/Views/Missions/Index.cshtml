@@ -7,8 +7,13 @@
     int currentStage = ViewBag.CurrentStage ?? 1;
     string growthName = ViewBag.GrowthName ?? "GrowQuest Plant";
 
+    int totalToday = ViewBag.TotalToday ?? 0;
+    int completedToday = ViewBag.CompletedToday ?? 0;
+    int remainingToday = ViewBag.RemainingToday ?? 0;
+
     string plantEmoji = "🌱";
     string stageName = "Seed";
+
     int nextStagePoints = 30;
     int previousStagePoints = 0;
 
@@ -16,6 +21,7 @@
     {
         plantEmoji = "🌿";
         stageName = "Small Plant";
+
         previousStagePoints = 30;
         nextStagePoints = 70;
     }
@@ -23,6 +29,7 @@
     {
         plantEmoji = "🪴";
         stageName = "Growing Plant";
+
         previousStagePoints = 70;
         nextStagePoints = 120;
     }
@@ -30,6 +37,7 @@
     {
         plantEmoji = "🌳";
         stageName = "Fully Grown";
+
         previousStagePoints = 120;
         nextStagePoints = 120;
     }
@@ -38,10 +46,15 @@
 
     if (currentStage < 4)
     {
-        int pointsInStage = progressPoints - previousStagePoints;
-        int pointsNeeded = nextStagePoints - previousStagePoints;
+        int pointsInStage =
+            progressPoints - previousStagePoints;
 
-        progressPercent = (int)((double)pointsInStage / pointsNeeded * 100);
+        int pointsNeeded =
+            nextStagePoints - previousStagePoints;
+
+        progressPercent =
+            (int)((double)pointsInStage /
+            pointsNeeded * 100);
 
         if (progressPercent < 0)
         {
@@ -54,35 +67,162 @@
         }
     }
 
-    int completedCount = Model.Count(m => m.IsCompleted);
-    int totalCount = Model.Count();
+    int dailyPercent = 0;
+
+    if (totalToday > 0)
+    {
+        dailyPercent =
+            (int)((double)completedToday /
+            totalToday * 100);
+    }
 }
 
-<div class="container py-4">
+<div class="container py-5">
 
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <!-- =========================
+         HEADER
+         ========================= -->
+
+    <div class="d-flex flex-column flex-md-row
+        justify-content-between
+        align-items-md-center
+        gap-3 mb-4">
 
         <div>
-            <h1 class="fw-bold">
+
+            <h1 class="fw-bold mb-1">
                 🌱 GrowQuest
             </h1>
 
             <p class="text-muted mb-0">
-                Complete your daily missions and grow your plant.
+                Complete today's missions and grow your plant.
             </p>
+
         </div>
 
         <a asp-action="Create"
-           class="btn btn-success btn-lg">
+           class="btn btn-success btn-lg px-4">
+
             + New Mission
+
         </a>
 
     </div>
 
 
-    <!-- Growth Section -->
-    <div class="card shadow-sm mb-4">
+    <!-- =========================
+         STAT CARDS
+         ========================= -->
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-6 col-lg-3">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <div class="text-muted small mb-1">
+                        Today's Missions
+                    </div>
+
+                    <div class="fs-2 fw-bold">
+                        @totalToday
+                    </div>
+
+                    <div class="small text-muted">
+                        📋 Planned today
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-6 col-lg-3">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <div class="text-muted small mb-1">
+                        Completed
+                    </div>
+
+                    <div class="fs-2 fw-bold text-success">
+                        @completedToday
+                    </div>
+
+                    <div class="small text-muted">
+                        ✅ Finished today
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-6 col-lg-3">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <div class="text-muted small mb-1">
+                        Remaining
+                    </div>
+
+                    <div class="fs-2 fw-bold">
+                        @remainingToday
+                    </div>
+
+                    <div class="small text-muted">
+                        ⏳ Still to complete
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-6 col-lg-3">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <div class="text-muted small mb-1">
+                        Total XP
+                    </div>
+
+                    <div class="fs-2 fw-bold text-success">
+                        @progressPoints
+                    </div>
+
+                    <div class="small text-muted">
+                        ⭐ Lifetime progress
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         PLANT CARD
+         ========================= -->
+
+    <div class="card shadow-sm border-0 mb-4">
 
         <div class="card-body p-4">
 
@@ -96,22 +236,40 @@
 
                 </div>
 
+
                 <div class="col-md-9">
 
-                    <h2 class="fw-bold">
+                    <h2 class="fw-bold mb-1">
                         @growthName
                     </h2>
 
-                    <h5>
+                    <h5 class="mb-3">
                         Stage @currentStage - @stageName
                     </h5>
 
-                    <p class="mb-2">
-                        <strong>@progressPoints XP</strong>
-                    </p>
+                    <div class="d-flex
+                        justify-content-between
+                        mb-2">
+
+                        <strong>
+                            @progressPoints XP
+                        </strong>
+
+                        @if (currentStage < 4)
+                        {
+                            <span class="text-muted">
+
+                                Next:
+                                @nextStagePoints XP
+
+                            </span>
+                        }
+
+                    </div>
+
 
                     <div class="progress"
-                         style="height: 25px;">
+                         style="height: 24px;">
 
                         <div class="progress-bar bg-success"
                              role="progressbar"
@@ -123,17 +281,22 @@
 
                     </div>
 
+
                     @if (currentStage < 4)
                     {
                         <p class="text-muted mt-2 mb-0">
+
                             @(nextStagePoints - progressPoints)
-                            XP until the next growth stage
+                            XP until your plant reaches the next stage.
+
                         </p>
                     }
                     else
                     {
-                        <p class="text-success mt-2 mb-0">
+                        <p class="text-success fw-semibold mt-2 mb-0">
+
                             🌟 Your plant is fully grown!
+
                         </p>
                     }
 
@@ -146,27 +309,49 @@
     </div>
 
 
-    <!-- Daily Progress -->
-    <div class="card shadow-sm mb-4">
+    <!-- =========================
+         DAILY PROGRESS
+         ========================= -->
 
-        <div class="card-body">
+    <div class="card shadow-sm border-0 mb-5">
 
-            <div class="d-flex justify-content-between align-items-center">
+        <div class="card-body p-4">
+
+            <div class="d-flex
+                justify-content-between
+                align-items-center
+                mb-2">
 
                 <div>
-                    <h5 class="mb-1">
+
+                    <h5 class="fw-bold mb-1">
                         Today's Progress
                     </h5>
 
-                    <p class="text-muted mb-0">
-                        @completedCount of @totalCount missions completed
-                    </p>
+                    <span class="text-muted">
+
+                        @completedToday of
+                        @totalToday missions completed
+
+                    </span>
+
                 </div>
 
-                <div>
-                    <span class="badge bg-success fs-6">
-                        @completedCount / @totalCount
-                    </span>
+                <span class="badge bg-success fs-6">
+
+                    @dailyPercent%
+
+                </span>
+
+            </div>
+
+
+            <div class="progress"
+                 style="height: 12px;">
+
+                <div class="progress-bar bg-success"
+                     role="progressbar"
+                     style="width: @dailyPercent%;">
                 </div>
 
             </div>
@@ -176,71 +361,120 @@
     </div>
 
 
-    <!-- Mission Heading -->
-    <div class="mb-3">
+    <!-- =========================
+         MISSIONS
+         ========================= -->
 
-        <h2>
-            Today's Missions
-        </h2>
+    <div class="d-flex
+        justify-content-between
+        align-items-center
+        mb-3">
+
+        <div>
+
+            <h2 class="fw-bold mb-1">
+                Today's Missions
+            </h2>
+
+            <p class="text-muted mb-0">
+                @DateTime.Today.ToString("dddd, MMMM dd")
+            </p>
+
+        </div>
 
     </div>
 
 
     @if (!Model.Any())
     {
-        <div class="alert alert-info">
+        <div class="card shadow-sm border-0">
 
-            You don't have any missions yet.
+            <div class="card-body
+                text-center
+                py-5">
 
-            <a asp-action="Create">
-                Create your first mission
-            </a>
+                <div style="font-size: 55px;">
+                    🌱
+                </div>
 
-            to begin your quest!
+                <h4 class="fw-bold mt-3">
+                    No missions yet
+                </h4>
+
+                <p class="text-muted">
+
+                    Start your day by creating your first mission.
+
+                </p>
+
+                <a asp-action="Create"
+                   class="btn btn-success">
+
+                    + Create Mission
+
+                </a>
+
+            </div>
 
         </div>
     }
     else
     {
-        <div class="row">
+        <div class="row g-4">
 
             @foreach (var item in Model)
             {
-                <div class="col-md-6 mb-4">
+                <div class="col-md-6">
 
-                    <div class="card shadow-sm h-100">
+                    <div class="card shadow-sm
+                        border-0 h-100">
 
-                        <div class="card-body">
+                        <div class="card-body p-4">
 
-                            <!-- Mission title and difficulty -->
-                            <div class="d-flex justify-content-between align-items-start">
 
-                                <h4 class="card-title">
+                            <!-- Title + difficulty -->
+
+                            <div class="d-flex
+                                justify-content-between
+                                align-items-start
+                                gap-3">
+
+                                <h4 class="card-title mb-2">
+
+                                    @if (item.IsCompleted)
+                                    {
+                                        <span>
+                                            ✅
+                                        </span>
+                                    }
+
                                     @item.Title
+
                                 </h4>
+
 
                                 @if (item.Difficulty == "Easy")
                                 {
                                     <span class="badge bg-success">
+
                                         Easy +10 XP
+
                                     </span>
                                 }
                                 else if (item.Difficulty == "Medium")
                                 {
                                     <span class="badge bg-warning text-dark">
+
                                         Medium +20 XP
+
                                     </span>
                                 }
                                 else if (item.Difficulty == "Hard")
                                 {
                                     <span class="badge bg-danger">
+
                                         Hard +30 XP
-                                    </span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-secondary">
-                                        @item.Difficulty
+
                                     </span>
                                 }
 
@@ -250,28 +484,31 @@
                             <!-- Description -->
                             @if (!string.IsNullOrWhiteSpace(item.Description))
                             {
-                                <p class="card-text mt-3">
+                                <p class="text-muted mt-2">
+
                                     @item.Description
+
                                 </p>
                             }
 
 
-                            <!-- Created Date -->
+                            <!-- Created time -->
+
                             <p class="small text-muted">
 
-                                Created:
-                                @item.CreatedDate.ToString("MMM dd, yyyy h:mm tt")
+                                Created at
+                                @item.CreatedDate.ToString("h:mm tt")
 
                             </p>
 
 
-                            <!-- Completed Mission -->
+                            <!-- Completion -->
                             @if (item.IsCompleted)
                             {
-                                <div class="alert alert-success">
+                                <div class="alert alert-success py-2">
 
                                     <strong>
-                                        ✅ Mission Completed
+                                        Mission Completed
                                     </strong>
 
                                     @if (item.CompletedDate.HasValue)
@@ -279,8 +516,11 @@
                                         <br />
 
                                         <small>
-                                            Completed:
-                                            @item.CompletedDate.Value.ToString("MMM dd, yyyy h:mm tt")
+
+                                            Completed at
+                                            @item.CompletedDate.Value
+                                            .ToString("h:mm tt")
+
                                         </small>
                                     }
 
@@ -308,7 +548,8 @@
 
 
                             <!-- Actions -->
-                            <div>
+
+                            <div class="d-flex gap-2">
 
                                 @if (!item.IsCompleted)
                                 {
