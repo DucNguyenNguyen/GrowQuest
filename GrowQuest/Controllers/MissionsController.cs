@@ -16,10 +16,9 @@ namespace GrowQuest.Controllers
 
 
         // =========================================
-        // DASHBOARD
+        // DASHBOARD - TODAY
         // =========================================
 
-        // GET: Missions
         public async Task<IActionResult> Index()
         {
             DateTime today = DateTime.Today;
@@ -27,8 +26,18 @@ namespace GrowQuest.Controllers
 
             var missions = await _context.Missions
                 .Where(m =>
-                    m.CreatedDate >= today &&
-                    m.CreatedDate < tomorrow)
+                    (
+                        m.MissionDate.HasValue &&
+                        m.MissionDate.Value >= today &&
+                        m.MissionDate.Value < tomorrow
+                    )
+                    ||
+                    (
+                        !m.MissionDate.HasValue &&
+                        m.CreatedDate >= today &&
+                        m.CreatedDate < tomorrow
+                    )
+                )
                 .OrderBy(m => m.IsCompleted)
                 .ThenByDescending(m => m.CreatedDate)
                 .ToListAsync();
@@ -44,9 +53,21 @@ namespace GrowQuest.Controllers
             }
             else
             {
-                ViewBag.ProgressPoints = growthItem.ProgressPoints;
-                ViewBag.CurrentStage = growthItem.CurrentStage;
-                ViewBag.GrowthName = growthItem.Name;
+                // Recalculate stage from XP.
+                // This also upgrades existing users to the
+                // new 10-level system automatically.
+                UpdateGrowthStage(growthItem);
+
+                await _context.SaveChangesAsync();
+
+                ViewBag.ProgressPoints =
+                    growthItem.ProgressPoints;
+
+                ViewBag.CurrentStage =
+                    growthItem.CurrentStage;
+
+                ViewBag.GrowthName =
+                    growthItem.Name;
             }
 
             ViewBag.TotalToday =
@@ -63,24 +84,84 @@ namespace GrowQuest.Controllers
 
 
         // =========================================
-        // MISSION HISTORY
+        // UPCOMING + OVERDUE
         // =========================================
 
-        // GET: Missions/History
+        public async Task<IActionResult> Upcoming()
+        {
+            DateTime today = DateTime.Today;
+            DateTime tomorrow = today.AddDays(1);
+
+            var allMissions = await _context.Missions
+                .Where(m => !m.IsCompleted)
+                .ToListAsync();
+
+            var upcomingMissions = allMissions
+                .Where(m =>
+                {
+                    DateTime missionDate =
+                        (m.MissionDate ?? m.CreatedDate).Date;
+
+                    return missionDate >= tomorrow;
+                })
+                .OrderBy(m =>
+                    (m.MissionDate ?? m.CreatedDate).Date)
+                .ThenBy(m => m.CreatedDate)
+                .ToList();
+
+            var overdueMissions = allMissions
+                .Where(m =>
+                {
+                    DateTime missionDate =
+                        (m.MissionDate ?? m.CreatedDate).Date;
+
+                    return missionDate < today;
+                })
+                .OrderBy(m =>
+                    (m.MissionDate ?? m.CreatedDate).Date)
+                .ThenBy(m => m.CreatedDate)
+                .ToList();
+
+            var viewModel = new MissionPlanningViewModel
+            {
+                UpcomingMissions = upcomingMissions,
+                OverdueMissions = overdueMissions
+            };
+
+            return View(viewModel);
+        }
+
+
+        // =========================================
+        // HISTORY
+        // =========================================
+
         public async Task<IActionResult> History()
         {
-            var missions = await _context.Missions
-                .OrderByDescending(m => m.CreatedDate)
+            DateTime today = DateTime.Today;
+
+            var allCompletedMissions = await _context.Missions
+                .Where(m => m.IsCompleted)
                 .ToListAsync();
+
+            var missions = allCompletedMissions
+                .Where(m =>
+                {
+                    DateTime missionDate =
+                        (m.MissionDate ?? m.CreatedDate).Date;
+
+                    return missionDate < today;
+                })
+                .OrderByDescending(m =>
+                    (m.MissionDate ?? m.CreatedDate).Date)
+                .ThenByDescending(m => m.CompletedDate)
+                .ToList();
 
             ViewBag.TotalMissions =
                 missions.Count;
 
             ViewBag.CompletedMissions =
-                missions.Count(m => m.IsCompleted);
-
-            ViewBag.IncompleteMissions =
-                missions.Count(m => !m.IsCompleted);
+                missions.Count;
 
             return View(missions);
         }
@@ -90,7 +171,6 @@ namespace GrowQuest.Controllers
         // DETAILS
         // =========================================
 
-        // GET: Missions/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -115,30 +195,73 @@ namespace GrowQuest.Controllers
         // CREATE
         // =========================================
 
-        // GET: Missions/Create
         public IActionResult Create()
         {
-            return View();
+            var mission = new Mission
+            {
+                MissionDate = DateTime.Today
+            };
+
+            return View(mission);
         }
 
 
-        // POST: Missions/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
-            [Bind("Title,Description,Difficulty")] Mission mission)
+            [Bind("Title,Description,Difficulty,MissionDate")]
+            Mission mission)
         {
+            if (!mission.MissionDate.HasValue)
+            {
+                mission.MissionDate =
+                    DateTime.Today;
+            }
+
             if (ModelState.IsValid)
             {
-                mission.CreatedDate = DateTime.Now;
-                mission.IsCompleted = false;
-                mission.CompletedDate = null;
+                mission.MissionDate =
+                    mission.MissionDate.Value.Date;
+
+                mission.CreatedDate =
+                    DateTime.Now;
+
+                mission.IsCompleted =
+                    false;
+
+                mission.CompletedDate =
+                    null;
 
                 _context.Missions.Add(mission);
 
                 await _context.SaveChangesAsync();
 
-                return RedirectToAction(nameof(Index));
+                DateTime scheduledDate =
+                    mission.MissionDate.Value.Date;
+
+                if (scheduledDate > DateTime.Today)
+                {
+                    TempData["SuccessMessage"] =
+                        "Future mission created successfully.";
+
+                    return RedirectToAction(
+                        nameof(Upcoming));
+                }
+
+                if (scheduledDate < DateTime.Today)
+                {
+                    TempData["SuccessMessage"] =
+                        "Past-dated mission created successfully.";
+
+                    return RedirectToAction(
+                        nameof(Upcoming));
+                }
+
+                TempData["SuccessMessage"] =
+                    "Mission created successfully.";
+
+                return RedirectToAction(
+                    nameof(Index));
             }
 
             return View(mission);
@@ -149,7 +272,6 @@ namespace GrowQuest.Controllers
         // EDIT
         // =========================================
 
-        // GET: Missions/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -167,23 +289,36 @@ namespace GrowQuest.Controllers
 
             if (mission.IsCompleted)
             {
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(
+                    nameof(Index));
+            }
+
+            if (!mission.MissionDate.HasValue)
+            {
+                mission.MissionDate =
+                    mission.CreatedDate.Date;
             }
 
             return View(mission);
         }
 
 
-        // POST: Missions/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(
             int id,
-            [Bind("MissionId,Title,Description,Difficulty")] Mission editedMission)
+            [Bind("MissionId,Title,Description,Difficulty,MissionDate")]
+            Mission editedMission)
         {
             if (id != editedMission.MissionId)
             {
                 return NotFound();
+            }
+
+            if (!editedMission.MissionDate.HasValue)
+            {
+                editedMission.MissionDate =
+                    DateTime.Today;
             }
 
             if (ModelState.IsValid)
@@ -202,7 +337,8 @@ namespace GrowQuest.Controllers
 
                     if (existingMission.IsCompleted)
                     {
-                        return RedirectToAction(nameof(Index));
+                        return RedirectToAction(
+                            nameof(Index));
                     }
 
                     existingMission.Title =
@@ -213,6 +349,9 @@ namespace GrowQuest.Controllers
 
                     existingMission.Difficulty =
                         editedMission.Difficulty;
+
+                    existingMission.MissionDate =
+                        editedMission.MissionDate.Value.Date;
 
                     await _context.SaveChangesAsync();
                 }
@@ -227,7 +366,17 @@ namespace GrowQuest.Controllers
                     throw;
                 }
 
-                return RedirectToAction(nameof(Index));
+                DateTime savedDate =
+                    editedMission.MissionDate.Value.Date;
+
+                if (savedDate != DateTime.Today)
+                {
+                    return RedirectToAction(
+                        nameof(Upcoming));
+                }
+
+                return RedirectToAction(
+                    nameof(Index));
             }
 
             return View(editedMission);
@@ -238,7 +387,6 @@ namespace GrowQuest.Controllers
         // DELETE
         // =========================================
 
-        // GET: Missions/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -259,10 +407,10 @@ namespace GrowQuest.Controllers
         }
 
 
-        // POST: Missions/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(
+            int id)
         {
             var mission = await _context.Missions
                 .FindAsync(id);
@@ -272,13 +420,14 @@ namespace GrowQuest.Controllers
                 return NotFound();
             }
 
-            // XP represents lifetime earned progress.
+            // XP is lifetime earned progress.
             // Deleting a mission does not remove XP.
             _context.Missions.Remove(mission);
 
             await _context.SaveChangesAsync();
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(
+                nameof(Index));
         }
 
 
@@ -286,10 +435,10 @@ namespace GrowQuest.Controllers
         // COMPLETE MISSION
         // =========================================
 
-        // POST: Missions/Complete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Complete(int id)
+        public async Task<IActionResult> Complete(
+            int id)
         {
             var mission = await _context.Missions
                 .FindAsync(id);
@@ -299,11 +448,13 @@ namespace GrowQuest.Controllers
                 return NotFound();
             }
 
-            // Only award XP once
+            // Prevent duplicate XP
             if (!mission.IsCompleted)
             {
                 mission.IsCompleted = true;
-                mission.CompletedDate = DateTime.Now;
+
+                mission.CompletedDate =
+                    DateTime.Now;
 
                 int pointsEarned =
                     GetMissionPoints(
@@ -315,12 +466,18 @@ namespace GrowQuest.Controllers
 
                 if (growthItem == null)
                 {
-                    growthItem = new GrowthItem
-                    {
-                        Name = "GrowQuest Plant",
-                        CurrentStage = 1,
-                        ProgressPoints = 0
-                    };
+                    growthItem =
+                        new GrowthItem
+                        {
+                            Name =
+                                "GrowQuest Plant",
+
+                            CurrentStage =
+                                1,
+
+                            ProgressPoints =
+                                0
+                        };
 
                     _context.GrowthItems.Add(
                         growthItem);
@@ -329,17 +486,29 @@ namespace GrowQuest.Controllers
                 growthItem.ProgressPoints +=
                     pointsEarned;
 
-                UpdateGrowthStage(growthItem);
+                UpdateGrowthStage(
+                    growthItem);
 
                 await _context.SaveChangesAsync();
             }
 
-            return RedirectToAction(nameof(Index));
+            DateTime effectiveDate =
+                (mission.MissionDate ??
+                 mission.CreatedDate).Date;
+
+            if (effectiveDate < DateTime.Today)
+            {
+                return RedirectToAction(
+                    nameof(Upcoming));
+            }
+
+            return RedirectToAction(
+                nameof(Index));
         }
 
 
         // =========================================
-        // XP HELPERS
+        // XP REWARD
         // =========================================
 
         private int GetMissionPoints(
@@ -355,18 +524,49 @@ namespace GrowQuest.Controllers
         }
 
 
+        // =========================================
+        // 10 LEVEL GROWTH SYSTEM
+        // =========================================
+
         private void UpdateGrowthStage(
             GrowthItem growthItem)
         {
-            if (growthItem.ProgressPoints >= 120)
+            int xp =
+                growthItem.ProgressPoints;
+
+            if (xp >= 1200)
+            {
+                growthItem.CurrentStage = 10;
+            }
+            else if (xp >= 900)
+            {
+                growthItem.CurrentStage = 9;
+            }
+            else if (xp >= 650)
+            {
+                growthItem.CurrentStage = 8;
+            }
+            else if (xp >= 450)
+            {
+                growthItem.CurrentStage = 7;
+            }
+            else if (xp >= 300)
+            {
+                growthItem.CurrentStage = 6;
+            }
+            else if (xp >= 200)
+            {
+                growthItem.CurrentStage = 5;
+            }
+            else if (xp >= 120)
             {
                 growthItem.CurrentStage = 4;
             }
-            else if (growthItem.ProgressPoints >= 70)
+            else if (xp >= 70)
             {
                 growthItem.CurrentStage = 3;
             }
-            else if (growthItem.ProgressPoints >= 30)
+            else if (xp >= 30)
             {
                 growthItem.CurrentStage = 2;
             }
@@ -378,14 +578,13 @@ namespace GrowQuest.Controllers
 
 
         // =========================================
-        // CHECK MISSION
+        // CHECK
         // =========================================
 
         private bool MissionExists(int id)
         {
             return _context.Missions
-                .Any(
-                    e => e.MissionId == id);
+                .Any(e => e.MissionId == id);
         }
     }
 }

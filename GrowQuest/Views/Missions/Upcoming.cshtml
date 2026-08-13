@@ -1,0 +1,539 @@
+﻿@model GrowQuest.Models.MissionPlanningViewModel
+
+@{
+    ViewData["Title"] = "Upcoming Missions";
+
+    int upcomingCount =
+        Model.UpcomingMissions.Count;
+
+    int overdueCount =
+        Model.OverdueMissions.Count;
+}
+
+
+<div class="container py-5">
+
+    <!-- HEADER -->
+    <div class="d-flex
+        flex-column
+        flex-md-row
+        justify-content-between
+        align-items-md-center
+        gap-3
+        mb-4">
+
+        <div>
+
+            <h1 class="fw-bold mb-1">
+                🗓️ Mission Planner
+            </h1>
+
+            <p class="text-muted mb-0">
+                Review upcoming missions and tasks
+                that still need your attention.
+            </p>
+
+        </div>
+
+
+        <a asp-action="Create"
+           class="btn btn-success btn-lg">
+
+            + New Mission
+
+        </a>
+
+    </div>
+
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+
+    <!-- SUMMARY -->
+    <div class="row g-3 mb-5">
+
+        <div class="col-md-6">
+
+            <div class="card
+                shadow-sm
+                border-0
+                h-100">
+
+                <div class="card-body p-4">
+
+                    <div class="text-muted small">
+                        Upcoming
+                    </div>
+
+                    <div class="fs-2 fw-bold text-success">
+                        @upcomingCount
+                    </div>
+
+                    <div class="small text-muted">
+                        🗓️ Future missions planned
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-6">
+
+            <div class="card
+                shadow-sm
+                border-0
+                h-100">
+
+                <div class="card-body p-4">
+
+                    <div class="text-muted small">
+                        Overdue
+                    </div>
+
+                    <div class="fs-2
+                        fw-bold
+                        @(overdueCount > 0 ? "text-danger" : "text-success")">
+
+                        @overdueCount
+
+                    </div>
+
+                    <div class="small text-muted">
+                        ⏰ Unfinished past missions
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================
+         OVERDUE
+         ===================================== -->
+
+    <div class="mb-5">
+
+        <div class="d-flex
+            justify-content-between
+            align-items-center
+            mb-3">
+
+            <div>
+
+                <h2 class="fw-bold mb-1">
+                    ⏰ Overdue
+                </h2>
+
+                <p class="text-muted mb-0">
+                    Past missions that haven't been completed.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        @if (!Model.OverdueMissions.Any())
+        {
+            <div class="card shadow-sm border-0">
+
+                <div class="card-body
+                    text-center
+                    py-4">
+
+                    <div class="fs-1">
+                        ✅
+                    </div>
+
+                    <h5 class="fw-bold mt-2">
+                        Nothing overdue
+                    </h5>
+
+                    <p class="text-muted mb-0">
+                        You're caught up with your past missions.
+                    </p>
+
+                </div>
+
+            </div>
+        }
+        else
+        {
+            <div class="row g-4">
+
+                @foreach (var item in Model.OverdueMissions)
+                {
+                    DateTime missionDate =
+                        (item.MissionDate ??
+                         item.CreatedDate).Date;
+
+                    int daysOverdue =
+                        (DateTime.Today - missionDate).Days;
+
+                    <div class="col-md-6">
+
+                        <div class="card
+                            shadow-sm
+                            border-danger
+                            h-100">
+
+                            <div class="card-body p-4">
+
+                                <div class="d-flex
+                                    justify-content-between
+                                    align-items-start
+                                    gap-3
+                                    mb-2">
+
+                                    <h4 class="fw-bold mb-0">
+                                        @item.Title
+                                    </h4>
+
+
+                                    <span class="badge bg-danger">
+
+                                        @daysOverdue
+                                        @(daysOverdue == 1 ? "day" : "days")
+                                        overdue
+
+                                    </span>
+
+                                </div>
+
+
+                                @if (!string.IsNullOrWhiteSpace(
+                                    item.Description))
+                                {
+                                    <p class="text-muted">
+                                        @item.Description
+                                    </p>
+                                }
+
+
+                                <div class="mb-3">
+
+                                    <span class="text-muted">
+                                        Scheduled:
+                                    </span>
+
+                                    <strong>
+                                        @missionDate.ToString(
+                                            "MMM dd, yyyy")
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="mb-3">
+
+                                    @if (item.Difficulty == "Easy")
+                                    {
+                                        <span class="badge bg-success">
+                                            Easy +10 XP
+                                        </span>
+                                    }
+                                    else if (item.Difficulty == "Medium")
+                                    {
+                                        <span class="badge
+                                            bg-warning
+                                            text-dark">
+                                            Medium +20 XP
+                                        </span>
+                                    }
+                                    else if (item.Difficulty == "Hard")
+                                    {
+                                        <span class="badge bg-danger">
+                                            Hard +30 XP
+                                        </span>
+                                    }
+
+                                </div>
+
+
+                                <form asp-action="Complete"
+                                      method="post"
+                                      class="mb-3">
+
+                                    <input type="hidden"
+                                           name="id"
+                                           value="@item.MissionId" />
+
+                                    <button type="submit"
+                                            class="btn btn-success">
+
+                                        ✓ Complete Mission
+
+                                    </button>
+
+                                </form>
+
+
+                                <div class="d-flex gap-2">
+
+                                    <a asp-action="Edit"
+                                       asp-route-id="@item.MissionId"
+                                       class="btn
+                                        btn-outline-primary
+                                        btn-sm">
+
+                                        Reschedule
+
+                                    </a>
+
+
+                                    <a asp-action="Details"
+                                       asp-route-id="@item.MissionId"
+                                       class="btn
+                                        btn-outline-secondary
+                                        btn-sm">
+
+                                        Details
+
+                                    </a>
+
+
+                                    <a asp-action="Delete"
+                                       asp-route-id="@item.MissionId"
+                                       class="btn
+                                        btn-outline-danger
+                                        btn-sm">
+
+                                        Delete
+
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+        }
+
+    </div>
+
+
+
+    <!-- =====================================
+         UPCOMING
+         ===================================== -->
+
+    <div>
+
+        <div class="mb-3">
+
+            <h2 class="fw-bold mb-1">
+                📅 Upcoming Missions
+            </h2>
+
+            <p class="text-muted mb-0">
+                Missions scheduled after today.
+            </p>
+
+        </div>
+
+
+        @if (!Model.UpcomingMissions.Any())
+        {
+            <div class="card shadow-sm border-0">
+
+                <div class="card-body
+                    text-center
+                    py-5">
+
+                    <div style="font-size: 55px;">
+                        🗓️
+                    </div>
+
+                    <h4 class="fw-bold mt-3">
+                        Nothing planned yet
+                    </h4>
+
+                    <p class="text-muted">
+                        Schedule a future mission
+                        when you're ready.
+                    </p>
+
+                    <a asp-action="Create"
+                       class="btn btn-success">
+
+                        + Plan a Mission
+
+                    </a>
+
+                </div>
+
+            </div>
+        }
+        else
+        {
+            <div class="row g-4">
+
+                @foreach (var item in Model.UpcomingMissions)
+                {
+                    DateTime missionDate =
+                        (item.MissionDate ??
+                         item.CreatedDate).Date;
+
+                    int daysAway =
+                        (missionDate - DateTime.Today).Days;
+
+                    <div class="col-md-6">
+
+                        <div class="card
+                            shadow-sm
+                            border-0
+                            h-100">
+
+                            <div class="card-body p-4">
+
+
+                                <div class="d-flex
+                                    justify-content-between
+                                    align-items-start
+                                    gap-3
+                                    mb-2">
+
+                                    <h4 class="fw-bold mb-0">
+                                        @item.Title
+                                    </h4>
+
+
+                                    <span class="badge
+                                        bg-light
+                                        text-dark
+                                        border">
+
+                                        @if (daysAway == 1)
+                                        {
+                                            <span>
+                                                Tomorrow
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span>
+                                                In @daysAway days
+                                            </span>
+                                        }
+
+                                    </span>
+
+                                </div>
+
+
+                                @if (!string.IsNullOrWhiteSpace(
+                                    item.Description))
+                                {
+                                    <p class="text-muted">
+                                        @item.Description
+                                    </p>
+                                }
+
+
+                                <div class="mb-3">
+
+                                    <span class="text-muted">
+                                        Scheduled:
+                                    </span>
+
+                                    <strong>
+                                        @missionDate.ToString(
+                                            "dddd, MMM dd, yyyy")
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="mb-3">
+
+                                    @if (item.Difficulty == "Easy")
+                                    {
+                                        <span class="badge bg-success">
+                                            Easy +10 XP
+                                        </span>
+                                    }
+                                    else if (item.Difficulty == "Medium")
+                                    {
+                                        <span class="badge
+                                            bg-warning
+                                            text-dark">
+                                            Medium +20 XP
+                                        </span>
+                                    }
+                                    else if (item.Difficulty == "Hard")
+                                    {
+                                        <span class="badge bg-danger">
+                                            Hard +30 XP
+                                        </span>
+                                    }
+
+                                </div>
+
+
+                                <div class="d-flex gap-2">
+
+                                    <a asp-action="Edit"
+                                       asp-route-id="@item.MissionId"
+                                       class="btn
+                                        btn-outline-primary
+                                        btn-sm">
+
+                                        Edit
+
+                                    </a>
+
+
+                                    <a asp-action="Details"
+                                       asp-route-id="@item.MissionId"
+                                       class="btn
+                                        btn-outline-secondary
+                                        btn-sm">
+
+                                        Details
+
+                                    </a>
+
+
+                                    <a asp-action="Delete"
+                                       asp-route-id="@item.MissionId"
+                                       class="btn
+                                        btn-outline-danger
+                                        btn-sm">
+
+                                        Delete
+
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+        }
+
+    </div>
+
+</div>

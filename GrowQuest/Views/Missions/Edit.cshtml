@@ -4,117 +4,148 @@
     ViewData["Title"] = "Edit Mission";
 }
 
-<div class="container py-4">
+<div class="growquest-page">
 
-    <div class="row justify-content-center">
+    <div class="create-mission-wrapper">
 
-        <div class="col-md-7">
+        <div class="text-center mb-4">
 
-            <div class="card shadow-sm">
+            <div class="page-icon">
+                ✏️
+            </div>
 
-                <div class="card-body p-4">
+            <h1 class="fw-bold mb-2">
+                Edit Mission
+            </h1>
 
-                    <h1 class="fw-bold mb-2">
-                        ✏️ Edit Mission
-                    </h1>
+            <p class="text-muted mb-0">
+                Update your mission details.
+            </p>
 
-                    <p class="text-muted">
-                        Update the details of your mission.
-                    </p>
+        </div>
 
-                    <hr />
 
-                    <form asp-action="Edit">
+        <div class="card growquest-card">
 
-                        <div asp-validation-summary="ModelOnly"
-                             class="text-danger"></div>
+            <div class="card-body p-4 p-md-5">
 
-                        <input type="hidden"
-                               asp-for="MissionId" />
+                <form asp-action="Edit">
 
-                        <div class="mb-3">
+                    <div asp-validation-summary="ModelOnly"
+                         class="text-danger mb-3">
+                    </div>
 
-                            <label asp-for="Title"
-                                   class="form-label fw-bold">
-                                Mission Title
-                            </label>
+                    <input type="hidden"
+                           asp-for="MissionId" />
 
-                            <input asp-for="Title"
-                                   class="form-control"
-                                   placeholder="Enter mission title" />
 
-                            <span asp-validation-for="Title"
-                                  class="text-danger"></span>
+                    <!-- Title -->
+                    <div class="mb-4">
 
-                        </div>
+                        <label asp-for="Title"
+                               class="form-label fw-semibold">
+                            Mission Title
+                        </label>
 
-                        <div class="mb-3">
+                        <input asp-for="Title"
+                               class="form-control growquest-input" />
 
-                            <label asp-for="Description"
-                                   class="form-label fw-bold">
-                                Description
-                            </label>
+                        <span asp-validation-for="Title"
+                              class="text-danger">
+                        </span>
 
-                            <textarea asp-for="Description"
-                                      class="form-control"
-                                      rows="4"
-                                      placeholder="Describe your mission..."></textarea>
+                    </div>
 
-                            <span asp-validation-for="Description"
-                                  class="text-danger"></span>
 
-                        </div>
+                    <!-- Description -->
+                    <div class="mb-4">
 
-                        <div class="mb-4">
+                        <label asp-for="Description"
+                               class="form-label fw-semibold">
+                            Description
+                        </label>
 
-                            <label asp-for="Difficulty"
-                                   class="form-label fw-bold">
-                                Difficulty
-                            </label>
+                        <textarea asp-for="Description"
+                                  class="form-control growquest-input"
+                                  rows="4"></textarea>
 
-                            <select asp-for="Difficulty"
-                                    class="form-select">
+                        <span asp-validation-for="Description"
+                              class="text-danger">
+                        </span>
 
-                                <option value="Easy">
-                                    Easy - 10 XP
-                                </option>
+                    </div>
 
-                                <option value="Medium">
-                                    Medium - 20 XP
-                                </option>
 
-                                <option value="Hard">
-                                    Hard - 30 XP
-                                </option>
+                    <!-- Mission Date -->
+                    <div class="mb-4">
 
-                            </select>
+                        <label asp-for="MissionDate"
+                               class="form-label fw-semibold">
+                            Mission Date
+                        </label>
 
-                            <span asp-validation-for="Difficulty"
-                                  class="text-danger"></span>
+                        <input asp-for="MissionDate"
+                               type="date"
+                               class="form-control growquest-input" />
 
-                        </div>
+                        <span asp-validation-for="MissionDate"
+                              class="text-danger">
+                        </span>
 
-                        <div class="d-flex gap-2">
+                    </div>
 
-                            <button type="submit"
-                                    class="btn btn-success">
 
-                                Save Changes
+                    <!-- Difficulty -->
+                    <div class="mb-4">
 
-                            </button>
+                        <label asp-for="Difficulty"
+                               class="form-label fw-semibold">
+                            Difficulty
+                        </label>
 
-                            <a asp-action="Index"
-                               class="btn btn-outline-secondary">
+                        <select asp-for="Difficulty"
+                                class="form-select growquest-input">
 
-                                Cancel
+                            <option value="Easy">
+                                🟢 Easy — 10 XP
+                            </option>
 
-                            </a>
+                            <option value="Medium">
+                                🟡 Medium — 20 XP
+                            </option>
 
-                        </div>
+                            <option value="Hard">
+                                🔴 Hard — 30 XP
+                            </option>
 
-                    </form>
+                        </select>
 
-                </div>
+                        <span asp-validation-for="Difficulty"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+
+                    <div class="d-grid gap-2">
+
+                        <button type="submit"
+                                class="btn btn-success btn-lg">
+
+                            Save Changes
+
+                        </button>
+
+                        <a asp-action="Index"
+                           class="btn btn-light btn-lg">
+
+                            Cancel
+
+                        </a>
+
+                    </div>
+
+                </form>
 
             </div>
 
@@ -124,7 +155,9 @@
 
 </div>
 
-@section Scripts {
+
+@section Scripts
+{
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }

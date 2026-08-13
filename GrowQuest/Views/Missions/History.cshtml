@@ -3,124 +3,113 @@
 @{
     ViewData["Title"] = "Mission History";
 
-    int totalMissions = ViewBag.TotalMissions ?? 0;
-    int completedMissions = ViewBag.CompletedMissions ?? 0;
-    int incompleteMissions = ViewBag.IncompleteMissions ?? 0;
+    int totalMissions =
+        ViewBag.TotalMissions ?? 0;
+
+    int completedMissions =
+        ViewBag.CompletedMissions ?? 0;
 }
+
 
 <div class="container py-5">
 
-    <!-- Header -->
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <!-- HEADER -->
+    <div class="d-flex
+        flex-column
+        flex-md-row
+        justify-content-between
+        align-items-md-center
+        gap-3
+        mb-4">
 
         <div>
+
             <h1 class="fw-bold mb-1">
                 📚 Mission History
             </h1>
 
             <p class="text-muted mb-0">
-                Review your previous GrowQuest missions.
+                Look back at missions you've accomplished.
             </p>
+
         </div>
+
 
         <a asp-action="Index"
            class="btn btn-outline-success">
-            ← Back to Dashboard
+
+            ← Dashboard
+
         </a>
 
     </div>
 
 
-    <!-- Summary Cards -->
-    <div class="row g-3 mb-5">
 
-        <div class="col-md-4">
-            <div class="card shadow-sm border-0 h-100">
+    <!-- SUMMARY -->
+    <div class="row mb-5">
+
+        <div class="col-md-6">
+
+            <div class="card
+                shadow-sm
+                border-0">
+
                 <div class="card-body p-4">
 
                     <div class="text-muted small">
-                        Total Missions
+                        Completed History
                     </div>
 
-                    <div class="fs-2 fw-bold">
-                        @totalMissions
-                    </div>
+                    <div class="fs-2
+                        fw-bold
+                        text-success">
 
-                    <div class="small text-muted">
-                        📋 All recorded missions
-                    </div>
-
-                </div>
-            </div>
-        </div>
-
-
-        <div class="col-md-4">
-            <div class="card shadow-sm border-0 h-100">
-                <div class="card-body p-4">
-
-                    <div class="text-muted small">
-                        Completed
-                    </div>
-
-                    <div class="fs-2 fw-bold text-success">
                         @completedMissions
+
                     </div>
 
                     <div class="small text-muted">
-                        ✅ Missions accomplished
+                        ✅ Past missions accomplished
                     </div>
 
                 </div>
+
             </div>
-        </div>
 
-
-        <div class="col-md-4">
-            <div class="card shadow-sm border-0 h-100">
-                <div class="card-body p-4">
-
-                    <div class="text-muted small">
-                        Incomplete
-                    </div>
-
-                    <div class="fs-2 fw-bold">
-                        @incompleteMissions
-                    </div>
-
-                    <div class="small text-muted">
-                        ⏳ Missions not completed
-                    </div>
-
-                </div>
-            </div>
         </div>
 
     </div>
 
 
-    <!-- History -->
+
+    <!-- HISTORY -->
     @if (!Model.Any())
     {
         <div class="card shadow-sm border-0">
 
-            <div class="card-body py-5 text-center">
+            <div class="card-body
+                py-5
+                text-center">
 
                 <div style="font-size: 55px;">
-                    🌱
+                    📖
                 </div>
 
                 <h4 class="fw-bold mt-3">
-                    No mission history yet
+                    No completed history yet
                 </h4>
 
                 <p class="text-muted">
-                    Create your first mission to begin your GrowQuest journey.
+                    Completed missions will appear here
+                    after their scheduled day has passed.
                 </p>
 
-                <a asp-action="Create"
+                <a asp-action="Index"
                    class="btn btn-success">
-                    + Create Mission
+
+                    Go to Dashboard
+
                 </a>
 
             </div>
@@ -135,11 +124,15 @@
 
                 <div class="table-responsive">
 
-                    <table class="table table-hover align-middle mb-0">
+                    <table class="table
+                        table-hover
+                        align-middle
+                        mb-0">
 
                         <thead class="table-light">
 
                             <tr>
+
                                 <th class="ps-4">
                                     Mission
                                 </th>
@@ -149,20 +142,21 @@
                                 </th>
 
                                 <th>
-                                    Created
-                                </th>
-
-                                <th>
-                                    Status
+                                    Mission Date
                                 </th>
 
                                 <th>
                                     Completed
                                 </th>
 
+                                <th>
+                                    Status
+                                </th>
+
                                 <th class="text-end pe-4">
                                     Actions
                                 </th>
+
                             </tr>
 
                         </thead>
@@ -172,6 +166,10 @@
 
                             @foreach (var item in Model)
                             {
+                                DateTime missionDate =
+                                    (item.MissionDate ??
+                                     item.CreatedDate).Date;
+
                                 <tr>
 
                                     <!-- Mission -->
@@ -181,7 +179,8 @@
                                             @item.Title
                                         </strong>
 
-                                        @if (!string.IsNullOrWhiteSpace(item.Description))
+                                        @if (!string.IsNullOrWhiteSpace(
+                                            item.Description))
                                         {
                                             <div class="small text-muted">
                                                 @item.Description
@@ -202,7 +201,9 @@
                                         }
                                         else if (item.Difficulty == "Medium")
                                         {
-                                            <span class="badge bg-warning text-dark">
+                                            <span class="badge
+                                                bg-warning
+                                                text-dark">
                                                 Medium +20 XP
                                             </span>
                                         }
@@ -212,26 +213,38 @@
                                                 Hard +30 XP
                                             </span>
                                         }
-                                        else
-                                        {
-                                            <span class="badge bg-secondary">
-                                                @item.Difficulty
-                                            </span>
-                                        }
 
                                     </td>
 
 
-                                    <!-- Created -->
+                                    <!-- Mission Date -->
                                     <td>
 
-                                        <div>
-                                            @item.CreatedDate.ToString("MMM dd, yyyy")
-                                        </div>
+                                        @missionDate.ToString(
+                                            "MMM dd, yyyy")
 
-                                        <div class="small text-muted">
-                                            @item.CreatedDate.ToString("h:mm tt")
-                                        </div>
+                                    </td>
+
+
+                                    <!-- Completed -->
+                                    <td>
+
+                                        @if (item.CompletedDate.HasValue)
+                                        {
+                                            <div>
+
+                                                @item.CompletedDate.Value
+                                                .ToString("MMM dd, yyyy")
+
+                                            </div>
+
+                                            <div class="small text-muted">
+
+                                                @item.CompletedDate.Value
+                                                .ToString("h:mm tt")
+
+                                            </div>
+                                        }
 
                                     </td>
 
@@ -239,41 +252,12 @@
                                     <!-- Status -->
                                     <td>
 
-                                        @if (item.IsCompleted)
-                                        {
-                                            <span class="text-success fw-semibold">
-                                                ✅ Completed
-                                            </span>
-                                        }
-                                        else
-                                        {
-                                            <span class="text-warning fw-semibold">
-                                                ⏳ Incomplete
-                                            </span>
-                                        }
+                                        <span class="text-success
+                                            fw-semibold">
 
-                                    </td>
+                                            ✅ Completed
 
-
-                                    <!-- Completed Date -->
-                                    <td>
-
-                                        @if (item.CompletedDate.HasValue)
-                                        {
-                                            <div>
-                                                @item.CompletedDate.Value.ToString("MMM dd, yyyy")
-                                            </div>
-
-                                            <div class="small text-muted">
-                                                @item.CompletedDate.Value.ToString("h:mm tt")
-                                            </div>
-                                        }
-                                        else
-                                        {
-                                            <span class="text-muted">
-                                                —
-                                            </span>
-                                        }
+                                        </span>
 
                                     </td>
 
@@ -281,25 +265,25 @@
                                     <!-- Actions -->
                                     <td class="text-end pe-4">
 
-                                        @if (!item.IsCompleted)
-                                        {
-                                            <a asp-action="Edit"
-                                               asp-route-id="@item.MissionId"
-                                               class="btn btn-outline-primary btn-sm">
-                                                Edit
-                                            </a>
-                                        }
-
                                         <a asp-action="Details"
                                            asp-route-id="@item.MissionId"
-                                           class="btn btn-outline-secondary btn-sm">
+                                           class="btn
+                                            btn-outline-secondary
+                                            btn-sm">
+
                                             Details
+
                                         </a>
+
 
                                         <a asp-action="Delete"
                                            asp-route-id="@item.MissionId"
-                                           class="btn btn-outline-danger btn-sm">
+                                           class="btn
+                                            btn-outline-danger
+                                            btn-sm">
+
                                             Delete
+
                                         </a>
 
                                     </td>

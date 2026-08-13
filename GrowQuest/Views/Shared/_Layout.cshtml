@@ -31,10 +31,7 @@
 <body class="d-flex flex-column min-vh-100">
 
 
-    <!-- =========================
-         NAVIGATION
-         ========================= -->
-
+    <!-- NAVBAR -->
     <header>
 
         <nav class="navbar
@@ -108,6 +105,19 @@
 
                             <a class="nav-link"
                                asp-controller="Missions"
+                               asp-action="Upcoming">
+
+                                Upcoming
+
+                            </a>
+
+                        </li>
+
+
+                        <li class="nav-item">
+
+                            <a class="nav-link"
+                               asp-controller="Missions"
                                asp-action="History">
 
                                 History
@@ -134,10 +144,7 @@
     </header>
 
 
-    <!-- =========================
-         CONTENT
-         ========================= -->
-
+    <!-- CONTENT -->
     <main role="main"
           class="flex-grow-1">
 
@@ -146,10 +153,7 @@
     </main>
 
 
-    <!-- =========================
-         FOOTER
-         ========================= -->
-
+    <!-- FOOTER -->
     <footer class="footer text-muted">
 
         <div class="container py-4">
@@ -167,10 +171,7 @@
     </footer>
 
 
-    <!-- =========================
-         SCRIPTS
-         ========================= -->
-
+    <!-- SCRIPTS -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
 
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

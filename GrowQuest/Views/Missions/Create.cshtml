@@ -8,7 +8,6 @@
 
     <div class="create-mission-wrapper">
 
-        <!-- Page Heading -->
         <div class="text-center mb-4">
 
             <div class="page-icon">
@@ -20,13 +19,12 @@
             </h1>
 
             <p class="text-muted mb-0">
-                Add something you want to accomplish today.
+                Add something you want to accomplish.
             </p>
 
         </div>
 
 
-        <!-- Create Mission Card -->
         <div class="card growquest-card">
 
             <div class="card-body p-4 p-md-5">
@@ -38,14 +36,12 @@
                     </div>
 
 
-                    <!-- Mission Title -->
+                    <!-- Title -->
                     <div class="mb-4">
 
                         <label asp-for="Title"
                                class="form-label fw-semibold">
-
                             Mission Title
-
                         </label>
 
                         <input asp-for="Title"
@@ -64,9 +60,7 @@
 
                         <label asp-for="Description"
                                class="form-label fw-semibold">
-
                             Description
-
                         </label>
 
                         <textarea asp-for="Description"
@@ -81,19 +75,39 @@
                     </div>
 
 
+                    <!-- Mission Date -->
+                    <div class="mb-4">
+
+                        <label asp-for="MissionDate"
+                               class="form-label fw-semibold">
+                            Mission Date
+                        </label>
+
+                        <input asp-for="MissionDate"
+                               type="date"
+                               class="form-control growquest-input" />
+
+                        <span asp-validation-for="MissionDate"
+                              class="text-danger">
+                        </span>
+
+                        <div class="form-text">
+                            Choose the day this mission belongs to.
+                        </div>
+
+                    </div>
+
+
                     <!-- Difficulty -->
                     <div class="mb-3">
 
                         <label asp-for="Difficulty"
                                class="form-label fw-semibold">
-
                             Difficulty
-
                         </label>
 
                         <select asp-for="Difficulty"
-                                class="form-select growquest-input"
-                                id="difficultySelect">
+                                class="form-select growquest-input">
 
                             <option value="">
                                 Choose difficulty
@@ -120,7 +134,7 @@
                     </div>
 
 
-                    <!-- Reward Information -->
+                    <!-- Reward -->
                     <div class="reward-box mb-4">
 
                         <div class="reward-icon">
@@ -143,7 +157,6 @@
                     </div>
 
 
-                    <!-- Buttons -->
                     <div class="d-grid gap-2">
 
                         <button type="submit"
@@ -169,7 +182,6 @@
         </div>
 
 
-        <!-- XP Guide -->
         <div class="xp-guide mt-4">
 
             <div class="xp-item">
@@ -214,10 +226,9 @@
 </div>
 
 
-@section Scripts {
-
+@section Scripts
+{
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-
 }
