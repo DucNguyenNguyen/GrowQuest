@@ -1,0 +1,142 @@
+﻿@model GrowQuest.Models.LoginViewModel
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+
+<div class="growquest-page">
+
+    <div class="create-mission-wrapper">
+
+
+        <div class="text-center mb-4">
+
+            <div class="page-icon">
+                🌱
+            </div>
+
+            <h1 class="fw-bold">
+                Welcome Back
+            </h1>
+
+            <p class="text-muted">
+                Login to continue your GrowQuest.
+            </p>
+
+        </div>
+
+
+        <div class="card growquest-card">
+
+            <div class="card-body p-4 p-md-5">
+
+
+                <form asp-action="Login"
+                      asp-route-returnUrl="@ViewData["ReturnUrl"]"
+                      method="post">
+
+
+                    <div asp-validation-summary="ModelOnly"
+                         class="alert alert-danger">
+                    </div>
+
+
+                    <div class="mb-4">
+
+                        <label asp-for="Email"
+                               class="form-label fw-semibold">
+                            Email
+                        </label>
+
+                        <input asp-for="Email"
+                               class="form-control growquest-input"
+                               placeholder="name@example.com" />
+
+                        <span asp-validation-for="Email"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+
+                    <div class="mb-4">
+
+                        <label asp-for="Password"
+                               class="form-label fw-semibold">
+                            Password
+                        </label>
+
+                        <input asp-for="Password"
+                               class="form-control growquest-input"
+                               placeholder="Enter password" />
+
+                        <span asp-validation-for="Password"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+
+                    <div class="form-check mb-4">
+
+                        <input asp-for="RememberMe"
+                               class="form-check-input" />
+
+                        <label asp-for="RememberMe"
+                               class="form-check-label">
+                        </label>
+
+                    </div>
+
+
+                    <div class="d-grid">
+
+                        <button type="submit"
+                                class="btn btn-success btn-lg">
+
+                            Login
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+
+                <hr class="my-4" />
+
+
+                <div class="text-center">
+
+                    <span class="text-muted">
+                        Don't have an account?
+                    </span>
+
+                    <a asp-action="Register"
+                       class="fw-semibold text-success">
+
+                        Create Account
+
+                    </a>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+@section Scripts
+{
+    @{
+        await Html.RenderPartialAsync(
+            "_ValidationScriptsPartial");
+    }
+}

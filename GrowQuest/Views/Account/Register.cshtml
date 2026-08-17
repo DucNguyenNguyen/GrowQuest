@@ -1,0 +1,182 @@
+﻿@model GrowQuest.Models.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Register";
+}
+
+
+<div class="growquest-page">
+
+    <div class="create-mission-wrapper">
+
+
+        <div class="text-center mb-4">
+
+            <div class="page-icon">
+                🌱
+            </div>
+
+            <h1 class="fw-bold">
+                Start Your GrowQuest
+            </h1>
+
+            <p class="text-muted">
+                Create an account and begin growing
+                through daily missions.
+            </p>
+
+        </div>
+
+
+        <div class="card growquest-card">
+
+            <div class="card-body p-4 p-md-5">
+
+
+                <form asp-action="Register"
+                      method="post">
+
+
+                    <div asp-validation-summary="ModelOnly"
+                         class="alert alert-danger">
+                    </div>
+
+
+                    <div class="mb-4">
+
+                        <label asp-for="Name"
+                               class="form-label fw-semibold">
+
+                            Name
+
+                        </label>
+
+                        <input asp-for="Name"
+                               class="form-control growquest-input"
+                               placeholder="Your name" />
+
+                        <span asp-validation-for="Name"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+
+                    <div class="mb-4">
+
+                        <label asp-for="Email"
+                               class="form-label fw-semibold">
+
+                            Email
+
+                        </label>
+
+                        <input asp-for="Email"
+                               class="form-control growquest-input"
+                               placeholder="name@example.com" />
+
+                        <span asp-validation-for="Email"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+
+                    <div class="mb-4">
+
+                        <label asp-for="Password"
+                               class="form-label fw-semibold">
+
+                            Password
+
+                        </label>
+
+                        <input asp-for="Password"
+                               class="form-control growquest-input"
+                               placeholder="Create password" />
+
+                        <span asp-validation-for="Password"
+                              class="text-danger">
+                        </span>
+
+
+                        <div class="form-text">
+
+                            Minimum 6 characters with
+                            uppercase, lowercase and a number.
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="mb-4">
+
+                        <label asp-for="ConfirmPassword"
+                               class="form-label fw-semibold">
+
+                            Confirm Password
+
+                        </label>
+
+                        <input asp-for="ConfirmPassword"
+                               class="form-control growquest-input"
+                               placeholder="Repeat password" />
+
+                        <span asp-validation-for="ConfirmPassword"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+
+                    <div class="d-grid">
+
+                        <button type="submit"
+                                class="btn btn-success btn-lg">
+
+                            🌱 Create Account
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+
+                <hr class="my-4" />
+
+
+                <div class="text-center">
+
+                    <span class="text-muted">
+                        Already have an account?
+                    </span>
+
+                    <a asp-action="Login"
+                       class="fw-semibold text-success">
+
+                        Login
+
+                    </a>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+@section Scripts
+{
+    @{
+        await Html.RenderPartialAsync(
+            "_ValidationScriptsPartial");
+    }
+}

@@ -1,4 +1,10 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@using GrowQuest.Models
+
+@inject SignInManager<ApplicationUser> SignInManager
+
+
+<!DOCTYPE html>
 
 <html lang="en">
 
@@ -7,7 +13,8 @@
     <meta charset="utf-8" />
 
     <meta name="viewport"
-          content="width=device-width, initial-scale=1.0" />
+          content="width=device-width,
+    initial-scale=1.0" />
 
     <title>
         @ViewData["Title"] - GrowQuest
@@ -31,21 +38,21 @@
 <body class="d-flex flex-column min-vh-100">
 
 
-    <!-- NAVBAR -->
     <header>
 
         <nav class="navbar
-                    navbar-expand-sm
-                    navbar-light
-                    bg-white
-                    border-bottom
-                    shadow-sm">
+            navbar-expand-lg
+            navbar-light
+            bg-white
+            border-bottom
+            shadow-sm">
 
             <div class="container">
 
+
                 <a class="navbar-brand
-                          fw-bold
-                          text-success"
+                    fw-bold
+                    text-success"
                    asp-controller="Missions"
                    asp-action="Index">
 
@@ -57,12 +64,10 @@
                 <button class="navbar-toggler"
                         type="button"
                         data-bs-toggle="collapse"
-                        data-bs-target="#growQuestNavbar"
-                        aria-controls="growQuestNavbar"
-                        aria-expanded="false"
-                        aria-label="Toggle navigation">
+                        data-bs-target="#growQuestNavbar">
 
-                    <span class="navbar-toggler-icon"></span>
+                    <span class="navbar-toggler-icon">
+                    </span>
 
                 </button>
 
@@ -70,70 +75,133 @@
                 <div class="collapse navbar-collapse"
                      id="growQuestNavbar">
 
-                    <ul class="navbar-nav
-                               me-auto
-                               mb-2
-                               mb-lg-0">
 
-                        <li class="nav-item">
+                    @if (SignInManager.IsSignedIn(User))
+                    {
 
-                            <a class="nav-link"
-                               asp-controller="Missions"
-                               asp-action="Index">
+                        <ul class="navbar-nav me-auto">
 
-                                Dashboard
+
+                            <li class="nav-item">
+
+                                <a class="nav-link"
+                                   asp-controller="Missions"
+                                   asp-action="Index">
+
+                                    Dashboard
+
+                                </a>
+
+                            </li>
+
+
+                            <li class="nav-item">
+
+                                <a class="nav-link"
+                                   asp-controller="Missions"
+                                   asp-action="Create">
+
+                                    New Mission
+
+                                </a>
+
+                            </li>
+
+
+                            <li class="nav-item">
+
+                                <a class="nav-link"
+                                   asp-controller="Missions"
+                                   asp-action="Upcoming">
+
+                                    Upcoming
+
+                                </a>
+
+                            </li>
+
+
+                            <li class="nav-item">
+
+                                <a class="nav-link"
+                                   asp-controller="Missions"
+                                   asp-action="History">
+
+                                    History
+
+                                </a>
+
+                            </li>
+
+
+                        </ul>
+
+
+                        <div class="d-flex
+                            align-items-center
+                            gap-3">
+
+
+                            <span class="text-muted small">
+
+                                👤 @User.Identity?.Name
+
+                            </span>
+
+
+                            <form asp-controller="Account"
+                                  asp-action="Logout"
+                                  method="post"
+                                  class="m-0">
+
+
+                                <button type="submit"
+                                        class="btn
+                                    btn-outline-secondary
+                                    btn-sm">
+
+                                    Logout
+
+                                </button>
+
+
+                            </form>
+
+
+                        </div>
+
+                    }
+                    else
+                    {
+
+                        <div class="ms-auto
+                            d-flex
+                            gap-2">
+
+
+                            <a asp-controller="Account"
+                               asp-action="Login"
+                               class="btn
+                                btn-outline-success">
+
+                                Login
 
                             </a>
 
-                        </li>
 
+                            <a asp-controller="Account"
+                               asp-action="Register"
+                               class="btn btn-success">
 
-                        <li class="nav-item">
-
-                            <a class="nav-link"
-                               asp-controller="Missions"
-                               asp-action="Create">
-
-                                New Mission
+                                Register
 
                             </a>
 
-                        </li>
 
+                        </div>
 
-                        <li class="nav-item">
+                    }
 
-                            <a class="nav-link"
-                               asp-controller="Missions"
-                               asp-action="Upcoming">
-
-                                Upcoming
-
-                            </a>
-
-                        </li>
-
-
-                        <li class="nav-item">
-
-                            <a class="nav-link"
-                               asp-controller="Missions"
-                               asp-action="History">
-
-                                History
-
-                            </a>
-
-                        </li>
-
-                    </ul>
-
-
-                    <span class="navbar-text text-muted">
-
-                        Complete missions. Grow your progress.
-
-                    </span>
 
                 </div>
 
@@ -144,7 +212,6 @@
     </header>
 
 
-    <!-- CONTENT -->
     <main role="main"
           class="flex-grow-1">
 
@@ -153,12 +220,12 @@
     </main>
 
 
-    <!-- FOOTER -->
     <footer class="footer text-muted">
 
         <div class="container py-4">
 
-            &copy; @DateTime.Now.Year - GrowQuest
+            &copy; @DateTime.Now.Year
+            - GrowQuest
 
             <span class="mx-2">
                 |
@@ -171,13 +238,15 @@
     </footer>
 
 
-    <!-- SCRIPTS -->
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js">
+    </script>
 
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js">
+    </script>
 
     <script src="~/js/site.js"
-            asp-append-version="true"></script>
+            asp-append-version="true">
+    </script>
 
 
     @await RenderSectionAsync(

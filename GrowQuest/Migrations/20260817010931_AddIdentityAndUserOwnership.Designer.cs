@@ -4,6 +4,7 @@ using GrowQuest.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GrowQuest.Migrations
 {
     [DbContext(typeof(GrowQuestDbContext))]
-    partial class GrowQuestDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260817010931_AddIdentityAndUserOwnership")]
+    partial class AddIdentityAndUserOwnership
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
